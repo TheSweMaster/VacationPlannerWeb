@@ -1,6 +1,4 @@
-using System;
-
-namespace VacationPlannerWeb.Models
+namespace VacationPlannerWeb.ViewModels
 {
     public class ErrorViewModel
     {

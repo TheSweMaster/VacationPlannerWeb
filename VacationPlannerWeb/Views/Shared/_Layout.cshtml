@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - VacationPlannerWeb</title>
+    <link rel="shortcut icon" type="image/x-icon" href="~/images/favicon.ico" />
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -30,21 +31,19 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a asp-area="" asp-controller="VacationBookings" asp-action="Index">Vacation Bookings</a></li>
+                    <li><a asp-area="" asp-controller="Calendar" asp-action="MyCalendar">My Calendar</a></li>
+                    <li><a asp-area="" asp-controller="Calendar" asp-action="UserOverview">User Overview</a></li>
                 </ul>
+                @await Html.PartialAsync("_RolesMenuPartial")
             </div>
         </div>
     </nav>
-
-    <partial name="_CookieConsentPartial" />
-
     <div class="container body-content">
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2019 - VacationPlannerWeb</p>
+            <p>&copy; @DateTime.Today.Year - Vacation Planner Web</p>
         </footer>
     </div>
 

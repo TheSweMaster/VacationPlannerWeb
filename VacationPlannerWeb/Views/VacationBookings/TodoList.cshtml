@@ -1,0 +1,73 @@
+﻿@model IEnumerable<VacationBooking>
+
+@{
+    ViewData["Title"] = "Todo List";
+}
+
+<h2>Vacation Bookings</h2>
+<h4>Manager Todo List</h4>
+
+<form asp-controller="VacationBookings" asp-action="TodoListApproval" method="post">
+    <table class="table" id="vacbooking-table">
+        <thead>
+            <tr>
+                <th>
+                    <a>@Html.DisplayNameFor(model => model.FromDate) <b class="caret"></b></a>
+                </th>
+                <th>
+                    <a>@Html.DisplayNameFor(model => model.ToDate) <b class="caret"></b></a>
+                </th>
+                <th>
+                    <a>@Html.DisplayNameFor(model => model.AbsenceType) <b class="caret"></b></a>
+                </th>
+                <th>
+                    <a>@Html.DisplayNameFor(model => model.Approval) <b class="caret"></b></a>
+                </th>
+                <th>
+                    <a>@Html.DisplayNameFor(model => model.Comment) <b class="caret"></b></a>
+                </th>
+                <th>
+                    <a>@Html.DisplayNameFor(model => model.User) <b class="caret"></b></a>
+                </th>
+                <th>Edit Approval</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FromDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ToDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AbsenceType.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Approval)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Comment)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.DisplayName)
+                    </td>
+                    <td>
+                        <a class="btn btn-success btn-sm" asp-action="TodoListApproval" asp-route-vacationBookingId="@item.Id" asp-route-approvalState="@ApprovalState.Approved.ToString()">Approve</a>
+                        <a class="btn btn-danger btn-sm" asp-action="TodoListApproval" asp-route-vacationBookingId="@item.Id" asp-route-approvalState="@ApprovalState.Denied.ToString()">Deny</a>
+                    </td>
+                    <td>
+                        <a class="btn btn-default btn-sm" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+
+@section Scripts {
+    <script src="~/js/TableSorting.js"></script>
+}

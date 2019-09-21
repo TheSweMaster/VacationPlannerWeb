@@ -1,0 +1,63 @@
+﻿@model AccountViewModel
+@inject Microsoft.AspNetCore.Identity.UserManager<User> userManager
+
+@{
+    ViewData["Title"] = "All Users";
+}
+
+<h2>All Users</h2>
+
+<table class="table" id="user-table">
+    <thead>
+        <tr>
+            <th>
+                UserName <b class="caret"></b>
+            </th>
+            <th>
+                DisplayName <b class="caret"></b>
+            </th>
+            <th>
+                Email <b class="caret"></b>
+            </th>
+            <th>
+                Department <b class="caret"></b>
+            </th>
+            <th>
+                Roles <b class="caret"></b>
+            </th>
+            <th>
+                Team <b class="caret"></b>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => user.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => user.DisplayName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => user.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => user.Department.Name)
+            </td>
+            <td>
+                @{ var userRoles = await userManager.GetRolesAsync(user);}
+                @string.Join(", ", userRoles)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => user.Team.Name)
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/js/TableSorting.js"></script>
+}

@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<User> _signInManager
+@inject UserManager<User> _userManager
+
+@if (_signInManager.IsSignedIn(User))
+{
+    <ul class="nav navbar-nav navbar-right">
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="dropdown">
+                <a href="#"
+                   class="dropdown-toggle" data-toggle="dropdown">Admin Menu<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a asp-area="" asp-controller="Calendar" asp-action="ManagerOverview"><b>Manager Overview</b></a></li>
+                    <li><a asp-area="" asp-controller="VacationBookings" asp-action="TodoList"><b>Todo List</b></a></li>
+                    <li><a asp-area="" asp-controller="WorkFreeDays" asp-action="Index"><b>Work-Free Days</b></a></li>
+                    <li><a asp-area="" asp-controller="AbsenceTypes" asp-action="Index"><b>Absence Types</b></a></li>
+                    <li><a asp-area="" asp-controller="Account" asp-action="Index"><b>User Accounts</b></a></li>
+                </ul>
+            </li>
+        }
+        else if (User.IsInRole("Manager"))
+        {
+            <li class="dropdown">
+                <a href="#"
+                   class="dropdown-toggle" data-toggle="dropdown">Manager Menu<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a asp-area="" asp-controller="Calendar" asp-action="ManagerOverview"><b>Manager Overview</b></a></li>
+                    <li><a asp-area="" asp-controller="VacationBookings" asp-action="TodoList"><b>Todo List</b></a></li>
+                    <li><a asp-area="" asp-controller="WorkFreeDays" asp-action="Index"><b>Work-Free Days</b></a></li>
+                    <li><a asp-area="" asp-controller="AbsenceTypes" asp-action="Index"><b>Absence Types</b></a></li>
+                </ul>
+            </li>
+        }
+        <li><a asp-area="" asp-controller="Account" asp-action="UserProfile">@User.Identity.Name</a></li>
+        <li><a id="logoutLink" asp-controller="Account" asp-action="LogOut">Log Out</a></li>
+    </ul>
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li><a id="registerLink" asp-controller="Account" asp-action="Register">Register</a></li>
+        <li><a id="loginLink" asp-controller="Account" asp-action="Login">Log in</a></li>
+    </ul>
+}

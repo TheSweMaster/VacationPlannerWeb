@@ -1,6 +1,4 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
-for details on configuring this project to bundle and minify static web assets. */
-body {
+﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
@@ -12,26 +10,94 @@ body {
     padding-right: 15px;
 }
 
-/* Carousel */
-.carousel-caption p {
-    font-size: 20px;
-    line-height: 1.4;
+.table-row-gray {
+    background-color: #f1f1f1;
 }
 
-/* Make .svg files in the carousel display properly in older browsers */
-.carousel-inner .item img[src$=".svg"] {
+.planned-vacation {
+    background-color: #ffe699;
+}
+
+.absence-color-0 {
+    background-color: #ccff99;
+}
+
+.absence-color-1 {
+    background-color: #99ffe6;
+}
+
+.absence-color-2 {
+    background-color: #99ccff;
+}
+
+.absence-color-3 {
+    background-color: #cc99ff;
+}
+
+.today {
+    border: 1px dotted darkgray;
+}
+
+.calendar-box {
+    border: 1px dotted darkgray;
+}
+
+.start-week {
+    border-left: 2px solid darkgray;
+}
+
+.weekend {
+    background-color: #ffb3b3;
+}
+
+.holiday {
+    background-color: #ff9999;
+}
+
+.calendar-table tbody tr td {
+    width: 12.5%;
+}
+
+.calendar-table tbody tr td a {
+    display: block;
+    color: #333;
+}
+
+.calendar-overview-table tbody tr td a {
+    display: block;
+    color: #333;
+}
+
+.calendar-overview-table {
+    font-size: 11px;
+}
+
+img {
     width: 100%;
+    height: auto;
 }
 
-/* QR code generator */
-#qrCode {
-    margin: 15px;
+.calendar-button {
+    display: block;
+    max-width: 150px;
 }
 
-/* Hide/rearrange for smaller screens */
-@media screen and (max-width: 767px) {
-    /* Hide captions */
-    .carousel-caption {
-        display: none;
-    }
+.user-filteritem {
+    padding: 0 10px
+}
+
+.user-filter-header {
+    margin-right: 85px;
+}
+
+.flex-container {
+    display: flex;
+}
+
+.hidden-loading {
+    display: block;
+}
+
+.show-loading {
+    display: none;
 }

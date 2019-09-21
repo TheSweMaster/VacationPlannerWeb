@@ -1,0 +1,20 @@
+﻿@model CalendarViewModel
+
+@{
+    var previousMonth = Model.Month - 1;
+    var nextMonth = Model.Month + 1;
+}
+
+<div class="pagination-sm" align="center">
+    <h3>
+        <a class="btn btn-default btn-lg" asp-controller="Calendar" asp-action="@Model.PostBackActionName"
+           asp-route-year="@Model.Year" asp-route-month="@previousMonth" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+        </a>
+        @Model.MonthAsString - @Model.YearAsString
+        <a class="btn btn-default btn-lg" asp-controller="Calendar" asp-action="@Model.PostBackActionName"
+           asp-route-year="@Model.Year" asp-route-month="@nextMonth" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+        </a>
+    </h3>
+</div>

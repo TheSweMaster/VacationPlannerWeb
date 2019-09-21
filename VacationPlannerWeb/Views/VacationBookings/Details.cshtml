@@ -1,0 +1,70 @@
+﻿@model VacationBooking
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>VacationBooking</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FromDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FromDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ToDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ToDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.AbsenceType)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AbsenceType.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Approval)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Approval)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Comment)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Comment)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.User)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User.DisplayName)
+        </dd>
+        <dt>
+            Vacation Days Amount
+        </dt>
+        <dd>
+            @Model.VacationDays.Count
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.VacationDays)
+        </dt>
+        @foreach (var item in Model.VacationDays)
+        {
+        <dd>
+            @item.VacationDate.ToString("yyyy-MM-dd")
+        </dd>
+        }
+    </dl>
+</div>
+<div>
+    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a class="btn btn-default" asp-action="Index">Back to List</a> |
+    <a class="btn btn-default" asp-controller="Calendar" asp-action="MyCalendar">Back to My Calendar</a>
+</div>

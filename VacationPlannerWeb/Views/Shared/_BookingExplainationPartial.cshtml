@@ -1,0 +1,27 @@
+﻿<p>
+    <div>
+        Approval Status:
+        @ApprovalState.Approved.ToString()
+        <span class="glyphicon glyphicon-ok planned-vacation" aria-hidden="true"></span>
+        @ApprovalState.Denied.ToString()
+        <span class="glyphicon glyphicon-remove planned-vacation" aria-hidden="true"></span>
+        @ApprovalState.Pending.ToString()
+        <span class="glyphicon glyphicon-option-horizontal planned-vacation" aria-hidden="true"></span>
+    </div>
+    <div>
+        Absence Type:
+        @for (int i = 0; i < Model.AbsenceTypes.Count; i++)
+        {
+            var cls3 = $"absence-color-{i} ";
+            @if (i < 4) // Only supports up to 4 colors
+            {
+                <span class="@cls3">@Model.AbsenceTypes[i]</span>
+            }
+            else
+            {
+                <span class="planned-vacation">@Model.AbsenceTypes[i]</span>
+            }
+        }
+        <span class="planned-vacation">Other</span>
+    </div>
+</p>

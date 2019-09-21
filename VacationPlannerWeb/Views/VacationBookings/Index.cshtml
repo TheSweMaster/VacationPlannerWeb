@@ -1,0 +1,70 @@
+﻿@model IEnumerable<VacationBooking>
+
+@{
+    ViewData["Title"] = "Vacation Bookings";
+}
+
+<h2>Vacation Bookings</h2>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Create New</a>
+</p>
+<table class="table" id="vacbooking-table">
+    <thead>
+        <tr>
+            <th>
+                <a>@Html.DisplayNameFor(model => model.FromDate) <b class="caret"></b></a>
+            </th>
+            <th>
+                <a>@Html.DisplayNameFor(model => model.ToDate) <b class="caret"></b></a>
+            </th>
+            <th>
+                <a>@Html.DisplayNameFor(model => model.AbsenceType) <b class="caret"></b></a>
+            </th>
+            <th>
+                <a>@Html.DisplayNameFor(model => model.Approval) <b class="caret"></b></a>
+            </th>
+            <th>
+                <a>@Html.DisplayNameFor(model => model.Comment) <b class="caret"></b></a>
+            </th>
+            <th>
+                <a>@Html.DisplayNameFor(model => model.User) <b class="caret"></b></a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FromDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ToDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AbsenceType.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Approval)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Comment)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.DisplayName)
+                </td>
+                <td>
+                    <a class="btn btn-default btn-sm" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a class="btn btn-default btn-sm" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a class="btn btn-default btn-sm" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/js/TableSorting.js"></script>
+}

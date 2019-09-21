@@ -1,0 +1,22 @@
+﻿@model CalendarOverviewViewModel
+
+@{
+    var previousWeek = Model.WeekNumber - 1;
+    var nextWeek = Model.WeekNumber + 1;
+}
+
+<div class="pagination-sm" align="center">
+    <h4>
+        <a class="btn btn-default btn-lg" asp-controller="Calendar" asp-action="@Model.PostBackActionName"
+           asp-route-year="@Model.Year" asp-route-weeknumber="@previousWeek" asp-route-sortOrder="@ViewData["CurrentSort"]"
+           aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+        </a>
+        Week @Model.WeekNumber - @Model.Year
+        <a class="btn btn-default btn-lg" asp-controller="Calendar" asp-action="@Model.PostBackActionName"
+           asp-route-year="@Model.Year" asp-route-weeknumber="@nextWeek" asp-route-sortOrder="@ViewData["CurrentSort"]"
+           aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+        </a>
+    </h4>
+</div>

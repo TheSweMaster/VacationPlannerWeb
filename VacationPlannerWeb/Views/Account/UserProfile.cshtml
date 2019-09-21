@@ -1,0 +1,74 @@
+﻿@model User
+@inject Microsoft.AspNetCore.Identity.UserManager<User> userManager
+
+@{
+    ViewData["Title"] = "UserProfile";
+}
+
+<h2>User Profile</h2>
+
+<div>
+    <h4>User - @Model.DisplayName</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DisplayName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DisplayName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Department)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Department.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Team)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Team.Name)
+        </dd>
+        <dt>
+            Roles
+        </dt>
+        <dd>
+            @{ var userRoles = await userManager.GetRolesAsync(Model);}
+            @string.Join(", ", userRoles)
+        </dd>
+        <dt>
+            Vacation Days Total
+        </dt>
+        <dd>
+            You have booked <b>@ViewData["VacationDaysCount"]</b> Vacation Days during @ViewData["VacationDaysCountPeriod"]
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a class="btn btn-default" asp-action="ListAll">List All Users</a>
+</div>
