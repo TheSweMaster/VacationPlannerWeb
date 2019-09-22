@@ -1,0 +1,103 @@
+﻿@model CalendarViewModel
+
+@{
+    ViewData["Title"] = "My Calendar";
+}
+
+<h2>My Calendar</h2>
+<a class="btn btn-primary" asp-controller="VacationBookings" asp-action="Create">Create New</a>
+
+@await Html.PartialAsync("_MonthPaginationPartial", Model)
+
+<table class="table calendar-table">
+    <thead>
+        <tr>
+            <th>
+                <b>Week</b>
+            </th>
+            @foreach (var weekday in Model.DayOfWeekList)
+            {
+                <th style="text-align: center">@weekday</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @{ var count = 0; }
+        @foreach (var week in Model.WeekCalendarData.Keys)
+        {
+            var cls1 = (count % 2 != 0) ? "table-row-gray " : "";
+            <tr>
+                <td class="@cls1">
+                    <b>@week</b>
+                </td>
+                @foreach (var calday in Model.WeekCalendarData[week])
+                {
+                    var cls2 = "";
+                    var action = "";
+                    if (calday.IsToday)
+                    {
+                        cls2 += "today ";
+                    }
+                    if (calday.IsWeekend)
+                    {
+                        cls2 += "weekend ";
+                    }
+                    if (calday.IsHoliday)
+                    {
+                        cls2 += "holiday ";
+                    }
+                    if (Model.AbsenceTypes != null)
+                    {
+                        for (int i = 0; i < Model.AbsenceTypes.Count; i++)
+                        {
+                            cls2 += (Model.AbsenceTypes[i] == calday.AbsenceType) ? $"absence-color-{i} " : "";
+                        }
+                    }
+                    if (calday.IsPlannedVacation)
+                    {
+                        cls2 += "planned-vacation ";
+                    }
+                    action = (calday.VacationBookingId == 0) ? "create" : "details";
+                    cls2 += cls1;
+
+
+                    if (calday.IsHoliday)
+                    {
+                        <td class="@cls2">
+                            <a class="btn btn-block" asp-controller="WorkFreeDays" asp-action="DetailsByDate" asp-route-date="@calday.Date">
+                                @calday.Date.ToString("dd")
+                                <span aria-hidden="true">@calday.Note</span>
+                            </a>
+                        </td>
+                    }
+                    else if (action == "details")
+                    {
+                        <td class="@cls2">
+                            <a class="btn btn-block" asp-controller="VacationBookings" asp-action="Details" asp-route-id="@calday.VacationBookingId">
+                                @calday.Date.ToString("dd")
+                                @if (calday.Approval == ApprovalState.Approved.ToString())
+                                {<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>}
+                                else if (calday.Approval == ApprovalState.Denied.ToString())
+                                {<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>}
+                                else if (calday.Approval == ApprovalState.Pending.ToString())
+                                {<span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>}
+                            </a>
+                        </td>
+                    }
+                    else if (action == "create")
+                    {
+                        <td class="@cls2">
+                            <a class="btn btn-block" asp-controller="VacationBookings" asp-action="Create" asp-route-startdate="@calday.Date">
+                                @calday.Date.ToString("dd")
+                            </a>
+                        </td>
+                    }
+
+                }
+            </tr>
+            count++;
+        }
+    </tbody>
+</table>
+
+@await Html.PartialAsync("_BookingExplainationPartial")

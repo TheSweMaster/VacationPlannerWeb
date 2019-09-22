@@ -15,7 +15,7 @@ namespace VacationPlannerWeb.Services
             _context = context;
         }
 
-        public virtual async Task<IList<string>> GetRolesShorteningsAsync(string userId)
+        public async Task<IList<string>> GetRolesShorteningsAsync(string userId)
         {
             var rolesShortenings = _context.Roles.Join(_context.UserRoles.Where(x => x.UserId == userId),
                 role => role.Id,

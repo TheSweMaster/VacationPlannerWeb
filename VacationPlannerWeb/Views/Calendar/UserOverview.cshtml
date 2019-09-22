@@ -1,0 +1,165 @@
+﻿@inject RolesService RolesService
+
+@model CalendarOverviewViewModel
+
+@{
+    ViewData["Title"] = "User Overview";
+}
+
+@functions{
+    public bool IsNewWeekColumn(int columnNumber)
+    {
+        return ((columnNumber + 1) % 5 == 0);
+    }
+}
+
+<h3>User Overview</h3>
+
+@await Html.PartialAsync("_UserFilterPartial", Model)
+
+@await Html.PartialAsync("_WeekPaginationPartial", Model, ViewData)
+
+<table class="table calendar-overview-table">
+    <thead>
+        <tr>
+            <th>Week</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            @for (int i = 0; i <= Model.CalendarDaysList.Count; i++)
+            {
+                if (IsNewWeekColumn(i))
+                {
+                    <th colspan="5" style="text-align: center">@Model.CalendarDaysList[i].WeekNumber</th>
+                }
+            }
+        </tr>
+        <tr>
+            <th>
+                <a asp-action="UserOverview" asp-route-sortOrder="@ViewData["NameSortParm"]"
+                   asp-route-year="@Model.Year" asp-route-weeknumber="@Model.WeekNumber"><b>User</b></a>
+            </th>
+            <th>
+                <a asp-action="UserOverview" asp-route-sortOrder="@ViewData["RoleSortParam"]"
+                   asp-route-year="@Model.Year" asp-route-weeknumber="@Model.WeekNumber"><b>Role</b></a>
+            </th>
+            <th>
+                <a asp-action="UserOverview" asp-route-sortOrder="@ViewData["DepartmentSortParam"]"
+                   asp-route-year="@Model.Year" asp-route-weeknumber="@Model.WeekNumber"><b>Department</b></a>
+            </th>
+            <th>
+                <a asp-action="UserOverview" asp-route-sortOrder="@ViewData["TeamSortParam"]"
+                   asp-route-year="@Model.Year" asp-route-weeknumber="@Model.WeekNumber"><b>Team</b></a>
+            </th>
+            @foreach (var day in Model.CalendarDaysList)
+            {
+                if (day.IsToday)
+                {
+                    <th style="text-align: center; color: mediumblue">@day.Date.ToString("dd")</th>
+                }
+                else
+                {
+                    <th style="text-align: center">@day.Date.ToString("dd")</th>
+                }
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @{ var count = 0; }
+        @foreach (var user in Model.AllUsersCalendarData.Keys)
+        {
+            var cls1 = (count % 2 != 0) ? "table-row-gray " : "";
+            <tr>
+                <td class="@cls1">
+                    <b>@user.DisplayName</b>
+                </td>
+                <td class="@cls1">
+                    @{ var userRoles = await RolesService.GetRolesShorteningsAsync(user.Id); }
+                    <b>@string.Join(",", userRoles)</b>
+                </td>
+                <td class="@cls1">
+                    <b>@user.Department?.Shortening</b>
+                </td>
+                <td class="@cls1">
+                    <b>@user.Team?.Shortening</b>
+                </td>
+                @foreach (var calday in Model.AllUsersCalendarData[user])
+                {
+                    var cls2 = "calendar-box ";
+                    var action = "";
+                    if (calday.IsToday)
+                    {
+                        cls2 += "today ";
+                    }
+                    if (calday.IsWeekend)
+                    {
+                        cls2 += "weekend ";
+                    }
+                    if (calday.IsHoliday)
+                    {
+                        cls2 += "holiday ";
+                    }
+                    if (calday.IsPlannedVacation)
+                    {
+                        cls2 += "planned-vacation ";
+                    }
+                    if (calday.IsStartOfWeek)
+                    {
+                        cls2 += "start-week ";
+                    }
+                    action = (calday.VacationBookingId == 0) ? "" : "Details";
+                    cls2 += cls1;
+
+                    if (calday.IsHoliday)
+                    {
+                        <td class="@cls2">
+                            <a class="btn btn-block btn-sm" asp-controller="WorkFreeDays" asp-action="DetailsByDate" asp-route-date="@calday.Date">
+                                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                            </a>
+                        </td>
+                    }
+                    else if (action == "Details")
+                    {
+                        <td class="@cls2">
+                            <a class="btn btn-block btn-sm" asp-controller="VacationBookings" asp-action="Details" asp-route-id="@calday.VacationBookingId">
+                                @if (calday.Approval == ApprovalState.Approved.ToString())
+                                {<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>}
+                                else if (calday.Approval == ApprovalState.Denied.ToString())
+                                {<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>}
+                                else if (calday.Approval == ApprovalState.Pending.ToString())
+                                {<span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>}
+                            </a>
+                        </td>
+                    }
+                    else if (action == "")
+                    {
+                        <td class="@cls2"></td>
+                    }
+
+                }
+            </tr>
+            count++;
+        }
+    </tbody>
+</table>
+
+<p>
+    <div>
+        Approval Status:
+        @ApprovalState.Approved.ToString()
+        <span class="glyphicon glyphicon-ok planned-vacation" aria-hidden="true"></span>
+        @ApprovalState.Denied.ToString()
+        <span class="glyphicon glyphicon-remove planned-vacation" aria-hidden="true"></span>
+        @ApprovalState.Pending.ToString()
+        <span class="glyphicon glyphicon-option-horizontal planned-vacation" aria-hidden="true"></span>
+    </div>
+    <div>
+        Holiday/No Work:
+        <span class="glyphicon glyphicon-home holiday" aria-hidden="true"></span>
+    </div>
+</p>
+
+@section Scripts {
+    <script src="~/js/UserRoleFilter.js"></script>
+    <script src="~/js/CalendarOverviewMargin.js"></script>
+}

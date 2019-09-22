@@ -1,5 +1,4 @@
-﻿
-$(function () {
+﻿$(function () {
     $("#vacbooking-table").tablesorter();
 });
 

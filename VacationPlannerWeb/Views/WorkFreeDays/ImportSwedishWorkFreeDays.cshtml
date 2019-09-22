@@ -1,0 +1,46 @@
+﻿@model List<WorkFreeDay>
+
+@{
+    ViewData["Title"] = "Swedish Work-Free Days";
+}
+
+<h2>Swedish Work-Free Days</h2>
+
+<form asp-controller="WorkFreeDays" asp-action="ImportSwedishWorkFreeDays" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Date)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input class="form-control" asp-for="@Model[i].Name" />
+                        <span asp-validation-for="@Model[i].Name" class="text-danger"></span>
+                    </td>
+                    <td class="form-group">
+                        <input class="form-control" asp-for="@Model[i].Date" />
+                        <span asp-validation-for="@Model[i].Date" class="text-danger"></span>
+                    </td>
+                    <td>
+                        <input type="hidden" asp-for="@Model[i].Id" />
+                    </td>
+                    <td>
+                        <input type="hidden" asp-for="@Model[i].Custom" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input type="submit" value="Save" class="btn btn-primary" /> |
+    <a class="btn btn-default" asp-action="Index">Back to List</a>
+</form>

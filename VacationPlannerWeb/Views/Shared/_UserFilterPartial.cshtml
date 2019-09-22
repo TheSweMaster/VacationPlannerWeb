@@ -1,0 +1,64 @@
+﻿@model CalendarOverviewViewModel
+
+<div>
+    <form asp-controller="Calendar" asp-action="OverviewSetFilter" id="filter-from" method="post">
+        <div class="flex-container">
+            <div class="dropdown">
+                <a href="#" class="dropdown-header dropdown-toggle user-filter-header" data-toggle="dropdown">
+                    <h4>Role Filter<b class="caret"></b></h4>
+                </a>
+                <ul class="dropdown-menu">
+                    @for (var i = 0; i < Model.RoleFilter.Count; i++)
+                    {
+                        <li class="user-filteritem">
+                            <input type="checkbox" asp-for="@Model.RoleFilter[i].Selected" onchange="SubmitFilter()" />
+                            <label asp-for="@Model.RoleFilter[i].Selected">@Model.RoleFilter[i].Name</label>
+                            <input type="hidden" asp-for="@Model.RoleFilter[i].Id" />
+                            <input type="hidden" asp-for="@Model.RoleFilter[i].Name" />
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="dropdown">
+                <a href="#" class="dropdown-header dropdown-toggle user-filter-header" data-toggle="dropdown">
+                    <h4>Department Filter<b class="caret"></b></h4>
+                </a>
+                <ul class="dropdown-menu">
+                    @for (var i = 0; i < Model.DepartmentFilter.Count; i++)
+                    {
+                        <li class="user-filteritem">
+                            <input type="checkbox" asp-for="@Model.DepartmentFilter[i].Selected" onchange="SubmitFilter()" />
+                            <label asp-for="@Model.DepartmentFilter[i].Selected">@Model.DepartmentFilter[i].Name</label>
+                            <input type="hidden" asp-for="@Model.DepartmentFilter[i].Id" />
+                            <input type="hidden" asp-for="@Model.DepartmentFilter[i].Name" />
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="dropdown">
+                <a href="#" class="dropdown-header dropdown-toggle user-filter-header" data-toggle="dropdown">
+                    <h4>Team Filter<b class="caret"></b></h4>
+                </a>
+                <ul class="dropdown-menu">
+                    @for (var i = 0; i < Model.TeamFilter.Count; i++)
+                    {
+                        <li class="user-filteritem">
+                            <input type="checkbox" asp-for="@Model.TeamFilter[i].Selected" onchange="SubmitFilter()" />
+                            <label asp-for="@Model.TeamFilter[i].Selected">@Model.TeamFilter[i].Name</label>
+                            <input type="hidden" asp-for="@Model.TeamFilter[i].Id" />
+                            <input type="hidden" asp-for="@Model.TeamFilter[i].Name" />
+                        </li>
+                    }
+                </ul>
+            </div>
+            <input type="hidden" asp-for="@Model.Year" />
+            <input type="hidden" asp-for="@Model.WeekNumber" />
+            <input type="hidden" asp-for="@Model.SortOrder" />
+            <input type="hidden" asp-for="@Model.PostBackActionName" />
+        </div>
+        @*<button type="submit" name="action">Submit</button>*@
+    </form>
+    <div hidden="hidden">@Model.RoleFilterString</div>
+    <div hidden="hidden">@Model.DepartmentFilterString</div>
+    <div hidden="hidden">@Model.TeamFilterString</div>
+</div>

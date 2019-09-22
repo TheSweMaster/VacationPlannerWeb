@@ -1,0 +1,30 @@
+﻿@model WorkFreeDay
+
+@{
+    ViewData["Title"] = "DetailsByDate";
+}
+
+<h2>Details By Date</h2>
+
+<div>
+    <h4>WorkFreeDay</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <b>@Html.DisplayNameFor(model => model.Name)</b>
+        </dt>
+        <dd>
+            <b>@Html.DisplayFor(model => model.Name)</b>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a class="btn btn-default" asp-action="ListAll">List All</a> |
+    <a class="btn btn-default" asp-controller="Calendar" asp-action="MyCalendar">Back to My Calendar</a>
+</div>

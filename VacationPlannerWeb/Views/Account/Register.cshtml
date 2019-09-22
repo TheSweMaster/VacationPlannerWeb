@@ -18,21 +18,49 @@
         }
     </ul>
     <div class="form-group">
-        <label asp-for="Email" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
+        <label asp-for="FirstName" class="col-md-1 control-label"></label>
+        <div class="col-md-4">
+            <input asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName" class="col-md-1 control-label"></label>
+        <div class="col-md-4">
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="TeamId" class="col-md-1 control-label"></label>
+        <div class="col-md-4">
+            <input asp-for="TeamId" class="form-control" />
+            <span asp-validation-for="TeamId" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="DepartmentId" class="col-md-1 control-label"></label>
+        <div class="col-md-4">
+            <input asp-for="DepartmentId" class="form-control" />
+            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="col-md-1 control-label"></label>
+        <div class="col-md-4">
             <input asp-for="Email" class="form-control" />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
-        <label asp-for="Password" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
+        <label asp-for="Password" class="col-md-1 control-label"></label>
+        <div class="col-md-4">
             <input asp-for="Password" class="form-control" />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
+        <div class="col-md-offset-1 col-md-4">
             <input type="submit" value="Register" class="btn btn-primary" />
         </div>
     </div>

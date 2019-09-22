@@ -6,8 +6,8 @@ namespace VacationPlannerWeb.ViewModels
     public class LoginViewModel
     {
         [Required]
-        [DisplayName("User Name")]
-        public string UserName { get; set; }
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

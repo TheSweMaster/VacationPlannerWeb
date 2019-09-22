@@ -363,7 +363,7 @@ namespace VacationPlannerWeb.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            var user = await _userManager.FindByNameAsync(model.Email);
 
             if (user != null)
             {
