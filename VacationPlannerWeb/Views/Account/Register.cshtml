@@ -4,7 +4,7 @@
     ViewData["Title"] = "Register";
 }
 
-<h2>Register at the Vacation Planner Web today, It's free!</h2>
+<h2>Register</h2>
 <form asp-controller="Account" asp-action="Register" method="post" class="form-horizontal" role="form">
     <h4>Create a new account and book your first vacation today!</h4>
     <hr />
@@ -18,53 +18,52 @@
         }
     </ul>
     <div class="form-group">
-        <label asp-for="FirstName" class="col-md-1 control-label"></label>
-        <div class="col-md-4">
+        <label asp-for="FirstName" class="col-md-2 control-label"></label>
+        <div class="col-md-5">
             <input asp-for="FirstName" class="form-control" />
             <span asp-validation-for="FirstName" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
-        <label asp-for="LastName" class="col-md-1 control-label"></label>
-        <div class="col-md-4">
+        <label asp-for="LastName" class="col-md-2 control-label"></label>
+        <div class="col-md-5">
             <input asp-for="LastName" class="form-control" />
             <span asp-validation-for="LastName" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
-        <label asp-for="TeamId" class="col-md-1 control-label"></label>
-        <div class="col-md-4">
-            <input asp-for="TeamId" class="form-control" />
-            <span asp-validation-for="TeamId" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="DepartmentId" class="col-md-1 control-label"></label>
-        <div class="col-md-4">
-            <input asp-for="DepartmentId" class="form-control" />
+        <label asp-for="DepartmentId" class="col-md-2 control-label"></label>
+        <div class="col-md-5">
+            <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.DepartmentId"></select>
             <span asp-validation-for="DepartmentId" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
-        <label asp-for="Email" class="col-md-1 control-label"></label>
-        <div class="col-md-4">
+        <label asp-for="TeamId" class="col-md-2 control-label"></label>
+        <div class="col-md-5">
+            <select asp-for="TeamId" class="form-control" asp-items="ViewBag.TeamId"></select>
+            <span asp-validation-for="TeamId" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="col-md-2 control-label"></label>
+        <div class="col-md-5">
             <input asp-for="Email" class="form-control" />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
-        <label asp-for="Password" class="col-md-1 control-label"></label>
-        <div class="col-md-4">
+        <label asp-for="Password" class="col-md-2 control-label"></label>
+        <div class="col-md-5">
             <input asp-for="Password" class="form-control" />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
-        <div class="col-md-offset-1 col-md-4">
+        <div class="col-md-offset-2 col-md-5">
             <input type="submit" value="Register" class="btn btn-primary" />
         </div>
     </div>
-    @*TODO: Add more options*@
 </form>
 
 @section Scripts {

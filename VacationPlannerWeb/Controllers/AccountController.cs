@@ -136,17 +136,22 @@ namespace VacationPlannerWeb.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditUser(string id, [Bind("Id,TeamId,DepartmentId")] User user)
+        public async Task<IActionResult> EditUser(string id, [Bind("Id,FirstName,LastName,TeamId,DepartmentId")] User user)
         {
-            //TODO: Add edit without admin permissision for user
-            if (id != user.Id)
+            if (id != user?.Id)
             {
                 return BadRequest();
             }
+
             var teamId = user.TeamId;
             var depId = user.DepartmentId;
+            var firstName = user.FirstName;
+            var lastName = user.LastName;
 
             user = await _context.Users.FindAsync(user.Id);
+            user.FirstName = firstName;
+            user.LastName = lastName;
+            user.DisplayName = $"{firstName} {lastName}";
             user.TeamId = teamId;
             user.DepartmentId = depId;
 
@@ -168,7 +173,95 @@ namespace VacationPlannerWeb.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewData["TeamId"] = new SelectList(await GetTeamsDisplayList(), "Id", "Name", user.TeamId);
+            ViewData["DepartmentId"] = new SelectList(await GetDepartmentDisplayList(), "Id", "Name", user.DepartmentId);
+            return View(user);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Edit(string id)
+        {
+            var user = await GetCurrentUser();
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+            if (isAdmin == false)
+            {
+                if (user.Id != id)
+                {
+                    return View(nameof(AccessDenied)); ;
+                }
+            }
+
+            var userToEdit = await _context.Users.SingleOrDefaultAsync(u => u.Id == id);
+            if (userToEdit == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["TeamId"] = new SelectList(await GetTeamsDisplayList(), "Id", "Name", userToEdit.TeamId);
+            ViewData["DepartmentId"] = new SelectList(await GetDepartmentDisplayList(), "Id", "Name", userToEdit.DepartmentId);
+            return View(userToEdit);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, [Bind("Id,FirstName,LastName,TeamId,DepartmentId")] User user)
+        {
+            if (id != user?.Id)
+            {
+                return NotFound();
+            }
+
+            var currentUser = await GetCurrentUser();
+            
+            var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
+            if (isAdmin == false)
+            {
+                if (currentUser?.Id != user.Id)
+                {
+                    return View(nameof(AccessDenied));
+                }
+            }
+
+            var teamId = user.TeamId;
+            var depId = user.DepartmentId;
+            var firstName = user.FirstName;
+            var lastName = user.LastName;
+
+            user = await _context.Users.FindAsync(user.Id);
+            user.FirstName = firstName;
+            user.LastName = lastName;
+            user.DisplayName = $"{firstName} {lastName}";
+            user.TeamId = teamId;
+            user.DepartmentId = depId;
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserExists(user.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(UserProfile));
             }
 
             ViewData["TeamId"] = new SelectList(await GetTeamsDisplayList(), "Id", "Name", user.TeamId);
@@ -315,8 +408,11 @@ namespace VacationPlannerWeb.Controllers
 
         #region Account Login
         [AllowAnonymous]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
+            ViewData["TeamId"] = new SelectList(await GetTeamsDisplayList(), "Id", "Name");
+            ViewData["DepartmentId"] = new SelectList(await GetDepartmentDisplayList(), "Id", "Name");
+
             return View(new RegisterViewModel
             {
                 Errors = new List<string>()
@@ -330,7 +426,17 @@ namespace VacationPlannerWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = model.Email, Email = model.Email };
+                var user = new User
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    DisplayName = $"{model.FirstName} {model.LastName}",
+                    TeamId = model.TeamId,
+                    DepartmentId = model.DepartmentId
+                };
+
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
@@ -343,6 +449,9 @@ namespace VacationPlannerWeb.Controllers
                     model.Errors = result.Errors.Select(x => x.Description).ToList();
                 }
             }
+
+            ViewData["TeamId"] = new SelectList(await GetTeamsDisplayList(), "Id", "Name", model.TeamId);
+            ViewData["DepartmentId"] = new SelectList(await GetDepartmentDisplayList(), "Id", "Name", model.DepartmentId);
             return View(model);
         }
 

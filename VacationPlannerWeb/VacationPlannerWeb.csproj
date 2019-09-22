@@ -15,7 +15,6 @@
     <Folder Include="JsonModels\" />
     <Folder Include="Services\" />
     <Folder Include="Validations\" />
-    <Folder Include="Views\Account\" />
     <Folder Include="Views\Calendar\" />
     <Folder Include="Views\WorkFreeDays\" />
   </ItemGroup>

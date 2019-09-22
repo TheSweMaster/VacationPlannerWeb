@@ -3,19 +3,26 @@
 
 @{
     ViewData["Title"] = "UserProfile";
+    var displayName = @Model.DisplayName == null ? Model.Email : Model.DisplayName;
 }
 
 <h2>User Profile</h2>
 
 <div>
-    <h4>User - @Model.DisplayName</h4>
+    <h4>User - @displayName</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.UserName)
+            @Html.DisplayNameFor(model => model.Email)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.UserName)
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DisplayName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DisplayName)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.FirstName)
@@ -28,18 +35,6 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.DisplayName)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.DisplayName)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Email)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Department)
@@ -70,5 +65,6 @@
 </div>
 
 <div>
+    <a class="btn btn-default btn-info" asp-action="Edit" asp-route-id="@Model.Id">Edit Profile</a> |
     <a class="btn btn-default" asp-action="ListAll">List All Users</a>
 </div>

@@ -11,13 +11,10 @@
     <thead>
         <tr>
             <th>
-                UserName <b class="caret"></b>
+                Email <b class="caret"></b>
             </th>
             <th>
                 DisplayName <b class="caret"></b>
-            </th>
-            <th>
-                Email <b class="caret"></b>
             </th>
             <th>
                 Department <b class="caret"></b>
@@ -35,13 +32,10 @@
         {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => user.UserName)
+                @Html.DisplayFor(modelItem => user.Email)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => user.DisplayName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => user.Email)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => user.Department.Name)

@@ -127,7 +127,7 @@ namespace VacationPlannerWeb.Controllers
             {
                 if (!IsOwner(vacationBooking, user))
                 {
-                    return BadRequest("You do not have permissions to access this Vacation Booking.");
+                    return View("AccessDenied");
                 }
             }
 
@@ -238,7 +238,7 @@ namespace VacationPlannerWeb.Controllers
             {
                 if (!IsOwner(vacationBooking, user))
                 {
-                    return BadRequest("You do not have permissions to access this Vacation Booking.");
+                    return View("AccessDenied");
                 }
 
                 if (ApprovalIsNotPending(vacationBooking))
@@ -367,11 +367,6 @@ namespace VacationPlannerWeb.Controllers
         private static List<DateTime> GetVacationDatesFromBookings(List<VacationBooking> userVacbookings)
         {
             return userVacbookings.SelectMany(x => x.VacationDays.Select(d => d.VacationDate)).ToList();
-        }
-
-        private string GetSiteURLByControllerActionId(string controller, string action, int id)
-        {
-            return $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{HttpContext.Request.PathBase}/{controller}/{action}/{id}";
         }
 
         private static void GenerateVacationDaysListFromBooking(VacationBooking vacationBooking, List<DateTime> holidayList, List<DateTime> userVacDates,
@@ -526,7 +521,7 @@ namespace VacationPlannerWeb.Controllers
             {
                 if (!IsOwner(vacationBooking, user))
                 {
-                    return BadRequest("You do not have permissions to access this Vacation Booking.");
+                    return View("AccessDenied");
                 }
 
                 if (vacationBooking.Approval == ApprovalState.Approved.ToString() && vacationBooking.FromDate < DateTime.Today)

@@ -18,6 +18,10 @@
     <form asp-action="RemoveUser">
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
+            <label class="control-label col-md-4">@Html.DisplayNameFor(model => model.DisplayName): </label>
+            <div>@Html.DisplayFor(model => model.DisplayName)</div>
+        </div>
+        <div class="form-group">
             <label class="control-label col-md-4">@Html.DisplayNameFor(model => model.UserName): </label>
             <div>@Html.DisplayFor(model => model.UserName)</div>
         </div>
@@ -26,6 +30,14 @@
             <div>
                 @Html.DisplayFor(model => model.Email)
             </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-4">@Html.DisplayNameFor(model => model.Team): </label>
+            <div>@Html.DisplayFor(model => model.Team.Name)</div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-4">@Html.DisplayNameFor(model => model.Department): </label>
+            <div>@Html.DisplayFor(model => model.Department.Name)</div>
         </div>
         <div class="form-group">
             <label class="control-label col-md-4">Roles: </label>

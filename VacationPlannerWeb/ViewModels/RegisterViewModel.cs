@@ -25,11 +25,9 @@ namespace VacationPlannerWeb.ViewModels
 
         [DisplayName("Team")]
         public int? TeamId { get; set; }
-        public Team Team { get; set; }
 
         [DisplayName("Department")]
         public int? DepartmentId { get; set; }
-        public Department Department { get; set; }
 
         public List<string> Errors { get; set; }
     }

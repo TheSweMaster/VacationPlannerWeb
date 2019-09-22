@@ -13,6 +13,5 @@ namespace VacationPlannerWeb.Models
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime VacationDate { get; set; }
-
     }
 }

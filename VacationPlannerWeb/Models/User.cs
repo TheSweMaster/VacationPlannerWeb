@@ -18,13 +18,5 @@ namespace VacationPlannerWeb.Models
         [NotMapped]
         public ICollection<Role> Roles { get; set; }
         public bool IsHidden { get; set; }
-
-        internal void UpdateAdInformation(string firstName, string lastName, string displayName, string email)
-        {
-            FirstName = firstName;
-            LastName = lastName;
-            DisplayName = displayName;
-            Email = email;
-        }
     }
 }

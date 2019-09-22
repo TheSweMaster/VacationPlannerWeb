@@ -34,7 +34,6 @@ namespace VacationPlannerWeb.Models
         [DataType(DataType.Text)]
         public string Comment { get; set; }
         public ICollection<VacationDay> VacationDays { get; set; }
-
     }
 
     public enum ApprovalState

@@ -10,6 +10,5 @@ namespace VacationPlannerWeb.Models
         [NotMapped]
         public ICollection<User> Users { get; set; }
         public string Shortening { get; set; }
-
     }
 }
