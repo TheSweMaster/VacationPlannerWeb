@@ -43,7 +43,11 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Today.Year - Vacation Planner Web</p>
+            <p>
+                &copy; @DateTime.Today.Year - Vacation Planner Web | 
+                <a asp-controller="Home" asp-action="About"><b>About</b></a> | 
+                <a asp-controller="Home" asp-action="Contact"><b>Contact</b></a>
+            </p>
         </footer>
     </div>
 
