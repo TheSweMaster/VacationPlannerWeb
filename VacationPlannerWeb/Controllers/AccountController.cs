@@ -274,6 +274,10 @@ namespace VacationPlannerWeb.Controllers
         {
             var user = await _context.Users.AsNoTracking()
                 .SingleOrDefaultAsync(u => u.Id == id);
+            
+            user.Team = await _context.Teams.AsNoTracking().SingleOrDefaultAsync(x => x.Id == user.TeamId);
+            user.Department = await _context.Departments.AsNoTracking().SingleOrDefaultAsync(x => x.Id == user.DepartmentId);
+
             if (user == null)
             {
                 return NotFound();
@@ -290,6 +294,11 @@ namespace VacationPlannerWeb.Controllers
             if (user == null)
             {
                 return NotFound();
+            }
+            if (await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                ViewData["DeleteError"] = $"You can't remove an Admin user.";
+                return View(nameof(RemoveUser), user);
             }
 
             var userVacBookings = await _context.VacationBookings.Include(x => x.VacationDays).Where(x => x.UserId == user.Id).ToListAsync();
@@ -308,18 +317,10 @@ namespace VacationPlannerWeb.Controllers
                 throw;
             }
 
-            user.FirstName = null;
-            user.LastName = null;
-            user.DisplayName = null;
-            user.Email = null;
-            user.DepartmentId = null;
-            user.TeamId = null;
-            user.IsHidden = true;
-
-            var deleteResult = await _userManager.UpdateAsync(user);
+            var deleteResult = await _userManager.DeleteAsync(user);
             if (!deleteResult.Succeeded)
             {
-                ViewData["DeleteError"] = "Something went wrong when removing the user.";
+                ViewData["DeleteError"] = $"Something went wrong when removing the user. {deleteResult.ToString()}";
                 var notChangedUser = await _context.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == id);
                 return View(nameof(RemoveUser), notChangedUser);
             }
