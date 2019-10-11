@@ -3,56 +3,69 @@
 
 @{
     ViewData["Title"] = "Remove User";
+    var displayName = @Model.DisplayName == null ? Model.Email : Model.DisplayName;
 }
 
 <h2>Remove User</h2>
-<h4>@Model.DisplayName</h4>
-<div>
-    Are you sure you want to delete all data related to this user?
-</div>
-<hr />
-<div class="text-danger">
-    @ViewData["DeleteError"]
-</div>
-<div>
-    <form asp-action="RemoveUser">
-        <input type="hidden" asp-for="Id" />
-        <div class="form-group">
-            <label class="control-label col-md-4">@Html.DisplayNameFor(model => model.DisplayName): </label>
-            <div>@Html.DisplayFor(model => model.DisplayName)</div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-md-4">@Html.DisplayNameFor(model => model.UserName): </label>
-            <div>@Html.DisplayFor(model => model.UserName)</div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-md-4">@Html.DisplayNameFor(model => model.Email): </label>
-            <div>
+<h4>@displayName</h4>
+<form asp-action="RemoveUser">
+    <input type="hidden" asp-for="Id" />
+    <div>
+        Are you sure you want to delete all data related to this user?
+    </div>
+    <div class="text-danger">
+        @ViewData["DeleteError"]
+    </div>
+    <hr />
+    <div>
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+            <dd>
                 @Html.DisplayFor(model => model.Email)
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-md-4">@Html.DisplayNameFor(model => model.Team): </label>
-            <div>@Html.DisplayFor(model => model.Team.Name)</div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-md-4">@Html.DisplayNameFor(model => model.Department): </label>
-            <div>@Html.DisplayFor(model => model.Department.Name)</div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-md-4">Roles: </label>
-            <div>
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.DisplayName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.DisplayName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.FirstName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.LastName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.LastName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Department)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Department.Name)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Team)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Team.Name)
+            </dd>
+            <dt>
+                Roles
+            </dt>
+            <dd>
                 @{ var userRoles = await userManager.GetRolesAsync(Model);}
-                @if (userRoles.Count == 0)
-                {
-                    @string.Concat("< None >");
-                }
                 @string.Join(", ", userRoles)
-            </div>
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Delete" class="btn btn-danger" /> |
-            <a asp-action="EditUser" asp-route-id="@Model.Id" class="btn btn-default">Back to Edit</a>
-        </div>
-    </form>
-</div>
+            </dd>
+        </dl>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="EditUser" asp-route-id="@Model.Id" class="btn btn-default">Back to Edit</a>
+    </div>
+</form>

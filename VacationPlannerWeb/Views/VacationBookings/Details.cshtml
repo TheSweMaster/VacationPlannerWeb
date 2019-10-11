@@ -11,6 +11,12 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
+            @Html.DisplayNameFor(model => model.User)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User.DisplayName)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.FromDate)
         </dt>
         <dd>
@@ -41,12 +47,6 @@
             @Html.DisplayFor(model => model.Comment)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.User.DisplayName)
-        </dd>
-        <dt>
             Vacation Days Amount
         </dt>
         <dd>
@@ -57,9 +57,9 @@
         </dt>
         @foreach (var item in Model.VacationDays)
         {
-        <dd>
-            @item.VacationDate.ToString("yyyy-MM-dd")
-        </dd>
+            <dd>
+                @item.VacationDate.ToString("yyyy-MM-dd")
+            </dd>
         }
     </dl>
 </div>

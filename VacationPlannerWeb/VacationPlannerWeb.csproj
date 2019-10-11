@@ -20,4 +20,10 @@
     <Folder Include="Views\WorkFreeDays\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Shared\AccessDenied.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
 </Project>

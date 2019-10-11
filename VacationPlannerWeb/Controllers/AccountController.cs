@@ -113,7 +113,13 @@ namespace VacationPlannerWeb.Controllers
 
             user.Team = await _context.Teams.AsNoTracking().SingleOrDefaultAsync(x => x.Id == user.TeamId);
             user.Department = await _context.Departments.AsNoTracking().SingleOrDefaultAsync(x => x.Id == user.DepartmentId);
+            user.ManagerUser = await _context.Users.AsNoTracking().SingleOrDefaultAsync(x => x.Id == user.ManagerUserId);
 
+            var managerForUsers = await _context.Users.AsNoTracking()
+                .Where(x => x.ManagerUserId != null).Where(x => x.ManagerUserId == user.Id)
+                .Select(x => x.DisplayName).ToListAsync();
+
+            ViewData["ManagerForUserNames"] = string.Join(", ", managerForUsers);
             ViewData["VacationDaysCount"] = vacdays.Count;
             ViewData["VacationDaysCountPeriod"] = $"{startDate.ToString("yyyy-MM-dd")} - {endDate.ToString("yyyy-MM-dd")}";
             return View(user);
@@ -128,15 +134,21 @@ namespace VacationPlannerWeb.Controllers
                 return NotFound();
             }
 
+            var managerForUsers = await _context.Users.AsNoTracking()
+                .Where(x => x.ManagerUserId != null).Where(x => x.ManagerUserId == user.Id)
+                .Select(x => x.DisplayName).ToListAsync();
+
+            ViewData["ManagerForUserNames"] = managerForUsers.Any() ? string.Join(", ", managerForUsers) : "< None >";
             ViewData["TeamId"] = new SelectList(await GetTeamsDisplayList(), "Id", "Name", user.TeamId);
             ViewData["DepartmentId"] = new SelectList(await GetDepartmentDisplayList(), "Id", "Name", user.DepartmentId);
+            ViewData["ManagerUserId"] = new SelectList(await GetManagersDisplayList(), "Id", "DisplayName", user.ManagerUserId);
             return View(user);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditUser(string id, [Bind("Id,FirstName,LastName,TeamId,DepartmentId")] User user)
+        public async Task<IActionResult> EditUser(string id, [Bind("Id,FirstName,LastName,TeamId,DepartmentId,ManagerUserId")] User user)
         {
             if (id != user?.Id)
             {
@@ -145,6 +157,7 @@ namespace VacationPlannerWeb.Controllers
 
             var teamId = user.TeamId;
             var depId = user.DepartmentId;
+            var manId = user.ManagerUserId;
             var firstName = user.FirstName;
             var lastName = user.LastName;
 
@@ -154,6 +167,7 @@ namespace VacationPlannerWeb.Controllers
             user.DisplayName = $"{firstName} {lastName}";
             user.TeamId = teamId;
             user.DepartmentId = depId;
+            user.ManagerUserId = manId;
 
             if (ModelState.IsValid)
             {
@@ -178,6 +192,7 @@ namespace VacationPlannerWeb.Controllers
 
             ViewData["TeamId"] = new SelectList(await GetTeamsDisplayList(), "Id", "Name", user.TeamId);
             ViewData["DepartmentId"] = new SelectList(await GetDepartmentDisplayList(), "Id", "Name", user.DepartmentId);
+            ViewData["ManagerUserId"] = new SelectList(await GetManagersDisplayList(), "Id", "DisplayName", user.ManagerUserId);
             return View(user);
         }
 
@@ -274,6 +289,10 @@ namespace VacationPlannerWeb.Controllers
         {
             var user = await _context.Users.AsNoTracking()
                 .SingleOrDefaultAsync(u => u.Id == id);
+            
+            user.Team = await _context.Teams.AsNoTracking().SingleOrDefaultAsync(x => x.Id == user.TeamId);
+            user.Department = await _context.Departments.AsNoTracking().SingleOrDefaultAsync(x => x.Id == user.DepartmentId);
+
             if (user == null)
             {
                 return NotFound();
@@ -291,16 +310,26 @@ namespace VacationPlannerWeb.Controllers
             {
                 return NotFound();
             }
+            if (await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                ViewData["DeleteError"] = $"You can't remove an Admin user.";
+                return View(nameof(RemoveUser), user);
+            }
 
             var userVacBookings = await _context.VacationBookings.Include(x => x.VacationDays).Where(x => x.UserId == user.Id).ToListAsync();
             var userVacDays = userVacBookings.SelectMany(x => x.VacationDays);
             var userRoles = await _context.UserRoles.Where(x => x.UserId == user.Id).ToListAsync();
+
+            var usersToRemoveManager = _context.Users.Where(x => x.ManagerUserId == user.Id).ToList();
+            usersToRemoveManager.ForEach(u => u.ManagerUserId = null);
 
             try
             {
                 _context.VacationDays.RemoveRange(userVacDays);
                 _context.VacationBookings.RemoveRange(userVacBookings);
                 _context.UserRoles.RemoveRange(userRoles);
+                _context.Users.UpdateRange(usersToRemoveManager);
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -308,18 +337,10 @@ namespace VacationPlannerWeb.Controllers
                 throw;
             }
 
-            user.FirstName = null;
-            user.LastName = null;
-            user.DisplayName = null;
-            user.Email = null;
-            user.DepartmentId = null;
-            user.TeamId = null;
-            user.IsHidden = true;
-
-            var deleteResult = await _userManager.UpdateAsync(user);
+            var deleteResult = await _userManager.DeleteAsync(user);
             if (!deleteResult.Succeeded)
             {
-                ViewData["DeleteError"] = "Something went wrong when removing the user.";
+                ViewData["DeleteError"] = $"Something went wrong when removing the user. {deleteResult.ToString()}";
                 var notChangedUser = await _context.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == id);
                 return View(nameof(RemoveUser), notChangedUser);
             }
@@ -338,6 +359,13 @@ namespace VacationPlannerWeb.Controllers
             var depList = await _context.Departments.ToListAsync();
             depList.Add(new Department() { Name = "< None >" });
             return depList.OrderBy(d => d.Id).ToList();
+        }
+
+        private async Task<List<User>> GetManagersDisplayList()
+        {
+            var managerList = await _userManager.GetUsersInRoleAsync("Manager");
+            managerList.Add(new User { DisplayName = "< None >", Id = null });
+            return managerList.OrderBy(d => d.DisplayName).ToList();
         }
 
         private bool UserExists(string id)
@@ -379,6 +407,14 @@ namespace VacationPlannerWeb.Controllers
                 var result = await _userManager.RemoveFromRoleAsync(user, userRole);
                 if (result.Succeeded)
                 {
+                    if (userRole == "Manager")
+                    {
+                        var usersToRemoveManager = _context.Users.Where(x => x.ManagerUserId == user.Id).ToList();
+                        usersToRemoveManager.ForEach(u => u.ManagerUserId = null);
+
+                        _context.Users.UpdateRange(usersToRemoveManager);
+                        await _context.SaveChangesAsync();
+                    }
                     return Ok($"Removed user: {user.DisplayName} from the Role {userRole}.");
                 }
                 return BadRequest($"Error: {result.ToString()}");
