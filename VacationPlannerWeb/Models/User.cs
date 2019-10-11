@@ -18,7 +18,7 @@ namespace VacationPlannerWeb.Models
         [NotMapped]
         public ICollection<Role> Roles { get; set; }
         public bool IsHidden { get; set; }
-        public int? ManagerUserId { get; set; }
+        public string ManagerUserId { get; set; }
         [NotMapped]
         public User ManagerUser { get; set; }
     }

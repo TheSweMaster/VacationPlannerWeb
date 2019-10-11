@@ -34,9 +34,18 @@ namespace VacationPlannerWeb.Controllers
             }
 
             List<VacationBooking> vacBookingList;
-            vacBookingList = await HasRolesAsync(user, "Admin,Manager")
-                ? await GetAllVacationBookings()
-                : await GetVacationBookingsByUser(user);
+            if (await HasRolesAsync(user, "Admin"))
+            {
+                vacBookingList = await GetAllVacationBookings();
+            }
+            else if (await HasRolesAsync(user, "Manager"))
+            {
+                vacBookingList = GetVacationBookingsByManager(user);
+            }
+            else
+            {
+                vacBookingList = await GetVacationBookingsByUser(user);
+            }
 
             return View(vacBookingList);
         }
@@ -49,10 +58,14 @@ namespace VacationPlannerWeb.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> TodoList()
         {
+            var user = await GetCurrentUser();
             var vacBookingList = await _context.VacationBookings.AsNoTracking().Include(v => v.AbsenceType).Include(v => v.User)
-                .Where(v => v.Approval == ApprovalState.Pending.ToString()).OrderBy(x => x.FromDate).ToListAsync();
+                .Where(v => v.Approval == ApprovalState.Pending.ToString())
+                .OrderBy(x => x.FromDate).ToListAsync();
 
-            return View(vacBookingList);
+            var result = vacBookingList.Where(v => IsManagerForBookingUser(v, user)).ToList();
+
+            return View(result);
         }
 
         [Authorize(Roles = "Admin,Manager")]
@@ -99,7 +112,18 @@ namespace VacationPlannerWeb.Controllers
 
         private async Task<List<VacationBooking>> GetAllVacationBookings()
         {
-            return await _context.VacationBookings.Include(v => v.User).Include(v => v.VacationDays).Include(v => v.AbsenceType).ToListAsync();
+            return await _context.VacationBookings.Include(v => v.User).Include(v => v.VacationDays).Include(v => v.AbsenceType)
+                .ToListAsync();
+        }
+
+        private List<VacationBooking> GetVacationBookingsByManager(User userManager)
+        {
+            var vacationBookingList = new List<VacationBooking>();
+            var allBookings = _context.VacationBookings.Include(v => v.VacationDays).Include(v => v.AbsenceType).Include(v => v.User).ToList();
+            vacationBookingList.AddRange(allBookings.Where(v => v.UserId == userManager.Id));
+            vacationBookingList.AddRange(allBookings.Where(v => IsManagerForBookingUser(v, userManager)));
+            
+            return vacationBookingList.Distinct().ToList();
         }
 
         // GET: VacationBookings/Details/5
@@ -123,7 +147,7 @@ namespace VacationPlannerWeb.Controllers
 
             var user = await GetCurrentUser();
 
-            if (!await HasRolesAsync(user, "Admin,Manager"))
+            if (!await HasRolesAsync(user, "Admin") && ! IsManagerForBookingUser(vacationBooking, user))
             {
                 if (!IsOwner(vacationBooking, user))
                 {
@@ -137,6 +161,11 @@ namespace VacationPlannerWeb.Controllers
         private static bool IsOwner(VacationBooking vacationBooking, User user)
         {
             return vacationBooking.UserId == user.Id;
+        }
+
+        private bool IsManagerForBookingUser(VacationBooking vacationBooking, User user)
+        {
+            return vacationBooking.User.ManagerUserId == user.Id;
         }
 
         //Todo: Add both start and end-date as in parameters
@@ -224,7 +253,7 @@ namespace VacationPlannerWeb.Controllers
             }
 
             var vacationBooking = await _context.VacationBookings
-                .Include(v => v.VacationDays).Include(v => v.User).Include(v => v.AbsenceType)
+                .Include(v => v.User).Include(v => v.VacationDays).Include(v => v.AbsenceType)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (vacationBooking == null)
             {
@@ -234,7 +263,7 @@ namespace VacationPlannerWeb.Controllers
             var user = await GetCurrentUser();
             bool isNotEditable = false;
 
-            if (!await HasRolesAsync(user, "Admin,Manager"))
+            if (!await HasRolesAsync(user, "Admin") && !IsManagerForBookingUser(vacationBooking, user))
             {
                 if (!IsOwner(vacationBooking, user))
                 {
@@ -251,7 +280,7 @@ namespace VacationPlannerWeb.Controllers
 
             ViewBag.NotEditable = isNotEditable;
             ViewData["AbsenceTypes"] = new SelectList(await GetAbsenceTypes(), nameof(AbsenceType.Id), nameof(AbsenceType.Name), vacationBooking.AbsenceTypeId);
-            ViewData["ApprovalStates"] = new SelectList(await GetApprovalStatesForUser(vacationBooking.Approval, user), "Value", "Value", vacationBooking.Approval);
+            ViewData["ApprovalStates"] = new SelectList(await GetApprovalStatesForUser(vacationBooking, user), "Value", "Value", vacationBooking.Approval);
             ViewData["UserId"] = new SelectList(await _context.Users.Where(x => x.Id == vacationBooking.UserId).ToListAsync(), "Id", "DisplayName", vacationBooking.UserId);
             return View(vacationBooking);
         }
@@ -264,12 +293,12 @@ namespace VacationPlannerWeb.Controllers
         ///<summary>
         ///Returns list of all valid approval states for the specified user.
         ///</summary>
-        private async Task<IEnumerable<object>> GetApprovalStatesForUser(string vacationBookingApproval, User user)
+        private async Task<IEnumerable<object>> GetApprovalStatesForUser(VacationBooking vacationBooking, User user)
         {
             var apporalStateList = (ApprovalState[])Enum.GetValues(typeof(ApprovalState));
-            return await HasRolesAsync(user, "Admin,Manager")
+            return await HasRolesAsync(user, "Admin") || IsManagerForBookingUser(vacationBooking, user)
                 ? apporalStateList.Select(x => new { Value = x.ToString() })
-                : apporalStateList.Select(x => new { Value = x.ToString() }).Where(a => a.Value == vacationBookingApproval);
+                : apporalStateList.Select(x => new { Value = x.ToString() }).Where(a => a.Value == vacationBooking.Approval);
         }
 
         // POST: VacationBookings/Edit/5
@@ -283,7 +312,7 @@ namespace VacationPlannerWeb.Controllers
             }
 
             var vacbookingReadOnly = await _context.VacationBookings.AsNoTracking()
-                .Include(v => v.VacationDays).Include(v => v.User).Include(v => v.AbsenceType)
+                .Include(v => v.User).Include(v => v.VacationDays).Include(v => v.AbsenceType)
                 .SingleOrDefaultAsync(v => v.Id == id);
 
             if (vacbookingReadOnly.UserId != vacationBooking.UserId)
@@ -294,7 +323,7 @@ namespace VacationPlannerWeb.Controllers
             var user = await GetCurrentUser();
             bool isNotEditable = false;
 
-            if (!await HasRolesAsync(user, "Admin,Manager"))
+            if (!await HasRolesAsync(user, "Admin") && !IsManagerForBookingUser(vacbookingReadOnly, user))
             {
                 if (ApprovalIsNotPending(vacbookingReadOnly))
                 {
@@ -357,9 +386,13 @@ namespace VacationPlannerWeb.Controllers
                 }
             }
 
+            if (vacationBooking.User == null)
+            {
+                vacationBooking.User = vacbookingReadOnly.User;
+            }
             ViewBag.NotEditable = isNotEditable;
             ViewData["AbsenceTypes"] = new SelectList(await GetAbsenceTypes(), nameof(AbsenceType.Id), nameof(AbsenceType.Name), vacationBooking.AbsenceTypeId);
-            ViewData["ApprovalStates"] = new SelectList(await GetApprovalStatesForUser(vacationBooking.Approval, user), "Value", "Value", vacationBooking.Approval);
+            ViewData["ApprovalStates"] = new SelectList(await GetApprovalStatesForUser(vacationBooking, user), "Value", "Value", vacationBooking.Approval);
             ViewData["UserId"] = new SelectList(await _context.Users.Where(x => x.Id == vacationBooking.UserId).ToListAsync(), "Id", "DisplayName", vacationBooking.UserId);
             return View(vacationBooking);
         }
@@ -517,7 +550,7 @@ namespace VacationPlannerWeb.Controllers
 
             var user = await GetCurrentUser();
 
-            if (!await HasRolesAsync(user, "Admin,Manager"))
+            if (!await HasRolesAsync(user, "Admin") && !IsManagerForBookingUser(vacationBooking, user))
             {
                 if (!IsOwner(vacationBooking, user))
                 {

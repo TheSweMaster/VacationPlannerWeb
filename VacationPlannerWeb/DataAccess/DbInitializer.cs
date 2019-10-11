@@ -44,7 +44,8 @@ namespace VacationPlannerWeb.DataAccess
 
             var adminRole = new Role()
             {
-                Name = "Admin"
+                Name = "Admin",
+                Shortening = "Admin"
             };
 
             _roleManager.CreateAsync(adminRole).Wait();
@@ -96,7 +97,8 @@ namespace VacationPlannerWeb.DataAccess
             {
                 var managerRole = new Role()
                 {
-                    Name = "Manager"
+                    Name = "Manager",
+                    Shortening = "Mangr"
                 };
                 _roleManager.CreateAsync(managerRole).Wait();
             }
@@ -175,7 +177,7 @@ namespace VacationPlannerWeb.DataAccess
             return vacdayList;
         }
 
-        private void ClearDatabase()
+        private void ClearDatabase(bool clearAll = false)
         {
             var departments = _context.Departments.ToList();
             _context.Departments.RemoveRange(departments);
@@ -192,14 +194,28 @@ namespace VacationPlannerWeb.DataAccess
             var vacationBookings = _context.VacationBookings.ToList();
             _context.VacationBookings.RemoveRange(vacationBookings);
 
-            var users = _context.Users.ToList();
-            var userRoles = _context.UserRoles.ToList();
-
-            foreach (var user in users)
+            if (clearAll)
             {
-                if (!userRoles.Any(r => r.UserId == user.Id))
+                var userRolesRemove = _context.UserRoles.ToList();
+                _context.UserRoles.RemoveRange(userRolesRemove);
+
+                var roles = _context.Roles.ToList();
+                _context.Roles.RemoveRange(roles);
+
+                var usersRemove = _context.Users.ToList();
+                _context.Users.RemoveRange(usersRemove);
+            }
+            else
+            {
+                var users = _context.Users.ToList();
+                var userRoles = _context.UserRoles.ToList();
+
+                foreach (var user in users)
                 {
-                    _context.Users.Remove(user);
+                    if (!userRoles.Any(r => r.UserId == user.Id))
+                    {
+                        _context.Users.Remove(user);
+                    }
                 }
             }
 

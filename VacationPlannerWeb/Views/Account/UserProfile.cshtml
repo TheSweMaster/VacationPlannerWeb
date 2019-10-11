@@ -52,8 +52,20 @@
             Roles
         </dt>
         <dd>
-            @{ var userRoles = await userManager.GetRolesAsync(Model);}
+            @{ var userRoles = await userManager.GetRolesAsync(Model); }
             @string.Join(", ", userRoles)
+        </dd>
+        <dt>
+            Your Manager
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ManagerUser.DisplayName)
+        </dd>
+        <dt>
+            Manager For
+        </dt>
+        <dd>
+            @ViewData["ManagerForUserNames"]
         </dd>
         <dt>
             Vacation Days Total
