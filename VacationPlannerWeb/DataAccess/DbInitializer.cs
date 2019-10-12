@@ -103,13 +103,16 @@ namespace VacationPlannerWeb.DataAccess
                 _roleManager.CreateAsync(managerRole).Wait();
             }
 
-            var user1 = new User { UserName = "user1@gmail.com", Email = "user1@gmail.com", FirstName = "Pelle", LastName = "Svantesson", DisplayName = "Pelle Svantesson", TeamId = team1.Id, DepartmentId = dep3.Id };
-            var user2 = new User { UserName = "user2@gmail.com", Email = "user2@gmail.com", FirstName = "Thom", LastName = "Ivarsson", DisplayName = "Thom Ivarsson", TeamId = team2.Id, DepartmentId = dep2.Id };
-            var user3 = new User { UserName = "user3@gmail.com", Email = "user3@gmail.com", FirstName = "Britta", LastName = "Johnsson", DisplayName = "Britta Johnsson", TeamId = team3.Id, DepartmentId = dep1.Id };
-            var user4 = new User { UserName = "user4@gmail.com", Email = "user4@gmail.com", FirstName = "Einar", LastName = "Andersson", DisplayName = "Einar Andersson", TeamId = team1.Id, DepartmentId = dep2.Id };
-            var user5 = new User { UserName = "user5@gmail.com", Email = "user5@gmail.com", FirstName = "Sarah", LastName = "Qvistsson", DisplayName = "Sarah Qvistsson", TeamId = team2.Id, DepartmentId = dep3.Id };
+            const string userPassword = "Password123";
 
-            string userPassword = "Password123";
+            var managerUser = new User { UserName = "manager@gmail.com", Email = "manager@gmail.com", FirstName = "Mike", LastName = "Manager", DisplayName = "Mike Manager", TeamId = team3.Id, DepartmentId = dep2.Id, };
+            _userManager.CreateAsync(managerUser, userPassword).Wait();
+
+            var user1 = new User { UserName = "user1@gmail.com", Email = "user1@gmail.com", FirstName = "Pelle", LastName = "Svantesson", DisplayName = "Pelle Svantesson", TeamId = team1.Id, DepartmentId = dep3.Id, ManagerUserId = managerUser.Id };
+            var user2 = new User { UserName = "user2@gmail.com", Email = "user2@gmail.com", FirstName = "Thom", LastName = "Ivarsson", DisplayName = "Thom Ivarsson", TeamId = team2.Id, DepartmentId = dep2.Id, ManagerUserId = managerUser.Id };
+            var user3 = new User { UserName = "user3@gmail.com", Email = "user3@gmail.com", FirstName = "Britta", LastName = "Johnsson", DisplayName = "Britta Johnsson", TeamId = team3.Id, DepartmentId = dep1.Id };
+            var user4 = new User { UserName = "user4@gmail.com", Email = "user4@gmail.com", FirstName = "Einar", LastName = "Andersson", DisplayName = "Einar Andersson", TeamId = team1.Id, DepartmentId = dep2.Id, ManagerUserId = managerUser.Id };
+            var user5 = new User { UserName = "user5@gmail.com", Email = "user5@gmail.com", FirstName = "Sarah", LastName = "Qvistsson", DisplayName = "Sarah Qvistsson", TeamId = team2.Id, DepartmentId = dep3.Id, ManagerUserId = managerUser.Id };
 
             var users = new List<User>()
             {
