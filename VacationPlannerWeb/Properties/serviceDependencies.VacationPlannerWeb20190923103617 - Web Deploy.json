@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/azurewebapppublishtest20180819070032dbserver/databases/VacationPlannerWeb20190923103617_db",
+      "type": "mssql.azure",
+      "connectionId": "VacationPlannerWebAzureDB",
+      "dynamicId": null
+    }
+  }
+}
