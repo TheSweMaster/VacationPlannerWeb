@@ -11,7 +11,7 @@ namespace VacationPlannerWeb
     {
         public static void Main(string[] args)
         {
-            var host = CreateWebHostBuilder(args).Build();
+            var host = CreateWebHostBuilder(args);
 
             using (var scope = host.Services.CreateScope())
             {
@@ -30,8 +30,14 @@ namespace VacationPlannerWeb
             host.Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        public static IWebHost CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                })
+                .UseStartup<Startup>()
+                .Build();
     }
 }

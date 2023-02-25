@@ -17,6 +17,7 @@
     },
     "VacationPlannerWeb": {
       "commandName": "Project",
+      "dotnetRunMessages": true,
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
