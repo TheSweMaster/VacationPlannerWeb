@@ -1,7 +1,7 @@
 # VacationPlannerWeb
 A website where you can book and manage your vacation leave in your organization.
 
-Link to the Website on Azure: https://vacationplannerweb20190923103617.azurewebsites.net/ (Online)
+Link to the Website on Azure: https://vacationplannerweb20190923103617.azurewebsites.net/ (Offline)
 
 
 ## Features
