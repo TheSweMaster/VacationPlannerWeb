@@ -63,7 +63,8 @@ namespace VacationPlannerWeb.Controllers
                 .Where(v => v.Approval == ApprovalState.Pending.ToString())
                 .OrderBy(x => x.FromDate).ToListAsync();
 
-            var result = vacBookingList.Where(v => IsManagerForBookingUser(v, user)).ToList();
+            var isAdmin = await HasRolesAsync(user, "Admin");
+            var result = vacBookingList.Where(v => IsManagerForBookingUser(v, user) || isAdmin).ToList();
 
             return View(result);
         }
@@ -363,7 +364,7 @@ namespace VacationPlannerWeb.Controllers
 
                 if (!isErrors)
                 {
-                    var oldVacationDays = _context.VacationDays.Where(v => v.VacationBookingId == id);
+                    var oldVacationDays = await _context.VacationDays.Where(v => v.VacationBookingId == id).ToListAsync();
                     try
                     {
                         _context.RemoveRange(oldVacationDays);

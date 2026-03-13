@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace VacationPlannerWeb.DataAccess
             _userManager = services.GetRequiredService<UserManager<User>>();
         }
 
-        public void Initialize()
+        public async Task InitializeAsync()
         {
             _context.Database.EnsureCreated();
 
@@ -30,13 +30,13 @@ namespace VacationPlannerWeb.DataAccess
             }
 
             ClearDatabase();
-            CreateAdminRole();
-            SeedDatabase();
+            await CreateAdminRoleAsync();
+            await SeedDatabaseAsync();
         }
 
-        private void CreateAdminRole()
+        private async Task CreateAdminRoleAsync()
         {
-            bool roleExists = _roleManager.RoleExistsAsync("Admin").Result;
+            bool roleExists = await _roleManager.RoleExistsAsync("Admin");
             if (roleExists)
             {
                 return;
@@ -48,7 +48,7 @@ namespace VacationPlannerWeb.DataAccess
                 Shortening = "Admin"
             };
 
-            _roleManager.CreateAsync(adminRole).Wait();
+            await _roleManager.CreateAsync(adminRole);
 
             var user = new User()
             {
@@ -60,15 +60,15 @@ namespace VacationPlannerWeb.DataAccess
             };
 
             string adminPassword = "Password123";
-            var userResult = _userManager.CreateAsync(user, adminPassword).Result;
+            var userResult = await _userManager.CreateAsync(user, adminPassword);
 
             if (userResult.Succeeded)
             {
-                _userManager.AddToRoleAsync(user, "Admin").Wait();
+                await _userManager.AddToRoleAsync(user, "Admin");
             }
         }
 
-        private void SeedDatabase()
+        private async Task SeedDatabaseAsync()
         {
             var team1 = new Team { Name = "Pandas", Shortening = "Pand" };
             var team2 = new Team { Name = "Tigers", Shortening = "Tigr" };
@@ -92,7 +92,7 @@ namespace VacationPlannerWeb.DataAccess
 
             _context.Departments.AddRange(deps);
 
-            bool roleExists = _roleManager.RoleExistsAsync("Manager").Result;
+            bool roleExists = await _roleManager.RoleExistsAsync("Manager");
             if (!roleExists)
             {
                 var managerRole = new Role()
@@ -100,13 +100,18 @@ namespace VacationPlannerWeb.DataAccess
                     Name = "Manager",
                     Shortening = "Mangr"
                 };
-                _roleManager.CreateAsync(managerRole).Wait();
+                await _roleManager.CreateAsync(managerRole);
             }
 
             const string userPassword = "Password123";
 
             var managerUser = new User { UserName = "manager@gmail.com", Email = "manager@gmail.com", FirstName = "Mike", LastName = "Manager", DisplayName = "Mike Manager", TeamId = team3.Id, DepartmentId = dep2.Id, };
-            _userManager.CreateAsync(managerUser, userPassword).Wait();
+            var managerResult = await _userManager.CreateAsync(managerUser, userPassword);
+
+            if (managerResult.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(managerUser, "Manager");
+            }
 
             var user1 = new User { UserName = "user1@gmail.com", Email = "user1@gmail.com", FirstName = "Pelle", LastName = "Svantesson", DisplayName = "Pelle Svantesson", TeamId = team1.Id, DepartmentId = dep3.Id, ManagerUserId = managerUser.Id };
             var user2 = new User { UserName = "user2@gmail.com", Email = "user2@gmail.com", FirstName = "Thom", LastName = "Ivarsson", DisplayName = "Thom Ivarsson", TeamId = team2.Id, DepartmentId = dep2.Id, ManagerUserId = managerUser.Id };
@@ -121,7 +126,7 @@ namespace VacationPlannerWeb.DataAccess
 
             foreach (var user in users)
             {
-                _userManager.CreateAsync(user, userPassword).Wait();
+                await _userManager.CreateAsync(user, userPassword);
             }
 
             var abs1 = new AbsenceType { Name = "Vacation" };

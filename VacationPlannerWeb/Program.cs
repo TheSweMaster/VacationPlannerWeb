@@ -72,7 +72,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        new DbInitializer(services).Initialize();
+        await new DbInitializer(services).InitializeAsync();
     }
     catch (Exception ex)
     {
