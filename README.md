@@ -8,11 +8,20 @@ Link to the Website on Azure: https://vacationplannerweb20190923103617.azurewebs
 
 ## Features
 
-### Book your vacation
-[![](https://i.gyazo.com/4ca3e6be3b6f4881d3c4e0d226dbb428.png)](https://gyazo.com/4ca3e6be3b6f4881d3c4e0d226dbb428)
+### My Calendar
+![My Calendar](My%20Calendar.png)
 
-### Manage the vacation bookings
-[![](https://i.gyazo.com/96cfe69f9c218c73c62a6c277ba565ee.png)](https://gyazo.com/96cfe69f9c218c73c62a6c277ba565ee)
+### Create Booking
+![Create Booking](Create%20booking.png)
 
-### Get an overview of the bookings
-[![](https://i.gyazo.com/6e8f964589b9bafd2f973fe1eb83558f.png)](https://gyazo.com/6e8f964589b9bafd2f973fe1eb83558f)
+### Manager Booking Overview
+![Manager Booking Overview](Manager%20booking%20overview.png)
+
+### Manager Approve Bookings
+![Manager Approve Bookings](Manager%20approve%20booking%20list.png)
+
+### Manage Users
+![Manage Users](Manage%20users.png)
+
+### Import Swedish Work-Free Days
+![Import Swedish Work-Free Days](Import%20and%20manage%20swedish%20work-free%20days.png)
