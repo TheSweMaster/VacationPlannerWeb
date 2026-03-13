@@ -1,6 +1,8 @@
 # VacationPlannerWeb
 A website where you can book and manage your vacation leave in your organization.
 
+Built with ASP.NET Core 10.0 MVC, Entity Framework Core 10.0, and ASP.NET Core Identity.
+
 Link to the Website on Azure: https://vacationplannerweb20190923103617.azurewebsites.net/ (Offline)
 
 

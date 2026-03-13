@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace VacationPlannerWeb.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly AppDbContext _context;
@@ -47,7 +47,6 @@ namespace VacationPlannerWeb.Controllers
             return View(accountViewModel);
         }
 
-        [Authorize]
         public async Task<IActionResult> ListAll()
         {
             var allUsers = await _context.Users.AsNoTracking().Where(x => x.IsHidden == false).ToListAsync();
@@ -85,7 +84,6 @@ namespace VacationPlannerWeb.Controllers
             return userRoleDictionary;
         }
 
-        [Authorize]
         public async Task<IActionResult> UserProfile()
         {
             var user = await GetCurrentUser();
@@ -196,7 +194,6 @@ namespace VacationPlannerWeb.Controllers
             return View(user);
         }
 
-        [Authorize]
         public async Task<IActionResult> Edit(string id)
         {
             var user = await GetCurrentUser();
@@ -225,7 +222,6 @@ namespace VacationPlannerWeb.Controllers
             return View(userToEdit);
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("Id,FirstName,LastName,TeamId,DepartmentId")] User user)
@@ -527,7 +523,6 @@ namespace VacationPlannerWeb.Controllers
             return View(model);
         }
 
-        [Authorize]
         public async Task<IActionResult> LogOut()
         {
             await _signInManager.SignOutAsync();
